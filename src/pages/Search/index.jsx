@@ -11,6 +11,8 @@ export function Search() {
     navigate('/dashboard');
   }
 
+
+
   return (
     <div className="home">
       <img src="logo_large.svg" alt="Logo" />
