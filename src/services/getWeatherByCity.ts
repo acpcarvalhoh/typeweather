@@ -5,11 +5,10 @@ import { getNextDays } from "../utils/getNextDays";
 import { weatherIcons, WeatherIconsKeysProps } from "../utils/weatherIcons";
 import { NextDaysItemProps } from "../components/NextDaysItem";
 
-interface getWeatherByCityProps{
-  latitude: string;
-  longitude: string;
+interface GetWeatherByCityProps{
+  latitude: number;
+  longitude: number;
 };
-
 
 
 export interface WeatherApiResponseProps{
@@ -35,13 +34,40 @@ export interface WeatherApiResponseProps{
   }[];
 };
 
-export async function getWeatherByCity({ latitude, longitude }: getWeatherByCityProps) {
+
+export interface WeatherResponseProps{
+  temp: number;
+  temp_min: number;
+  temp_max: number;
+  description: string
+  details: typeof weatherIcons["Clear"]
+};
+
+export interface DetailsResponseProps{
+  feels_like: number;
+  probability: number;
+  wind_speed: number;
+  humidity: number;
+  temp_kf: number;
+};
+
+interface TodayProps{
+  weather: WeatherResponseProps;
+  details: DetailsResponseProps;
+};
+
+export interface GetWeatherByCityResponseProps{
+  today: TodayProps;
+  nextDays: NextDaysItemProps[];
+};
+
+export async function getWeatherByCity({ latitude, longitude }: GetWeatherByCityProps): Promise<GetWeatherByCityResponseProps> {
   const { data } = await api.get<WeatherApiResponseProps>(`/forecast?lat=${latitude}&lon=${longitude}`);
   const { main, weather, wind, pop } = data.list[0];
   
   
 
-  const today = {
+  const today: TodayProps = {
     weather: {
       temp: Math.ceil(main.temp),
       temp_min: Math.floor(main.temp_min),
@@ -81,6 +107,9 @@ export async function getWeatherByCity({ latitude, longitude }: getWeatherByCity
       });
     }
   });
+
+
+  
 
   return { today, nextDays }
 }
